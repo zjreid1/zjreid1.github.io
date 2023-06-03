@@ -57,6 +57,7 @@ subprocess.run(['git', 'add', '.'])
 print("git add completed")
 subprocess.run(['git', 'commit', '-m', 'adding blog post'])
 print("git commit with commit message completed")
+print("ready for git push origin main")
 
 """
 # Git Commit
@@ -64,5 +65,5 @@ subprocess.Popen("git add .")
 print("git add completed")
 subprocess.Popen('git commit -m' " adding blog post")
 print("git commit with commit message completed")
-print("ready for git push origin main")
+
 """
