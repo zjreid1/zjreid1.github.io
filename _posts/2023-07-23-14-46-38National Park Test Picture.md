@@ -5,4 +5,4 @@ date: 2023-07-23-14-46-38
 categories: [Uncategorized]
 ---
 
-![USNP_BlackCanyonOfTheGunnison](/images/Black_Canyon_and_Gunnison_River_2008.jpg)
+![USNP_BlackCanyonOfTheGunnison](/docs/images/Black_Canyon_and_Gunnison_River_2008.jpg)
