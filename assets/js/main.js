@@ -35,7 +35,8 @@
       const x = i * fontSize;
 
       // Leading character brighter
-      ctx.fillStyle = '#39ff8a';
+      const colors = ['#39ff8a', '#39ff8a', '#ff6eb4', '#c8bfa8', '#00cccc'];
+      ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
       ctx.font = `${fontSize}px 'Share Tech Mono', monospace`;
       ctx.fillText(char, x, y * fontSize);
 
