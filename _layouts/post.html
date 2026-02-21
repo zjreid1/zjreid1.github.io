@@ -2,13 +2,39 @@
 layout: default
 ---
 
-<small>{{ page.date | date: "%-d %B %Y" }}</small>
-<h1>{{ page.title }}</h1>
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">{{ page.title }}</h1>
+    <div class="post-meta">
+      <span>⊛ {{ page.date | date: "%B %d, %Y" }}</span>
+      {% if page.tags %}
+      <span>
+        {% for tag in page.tags %}
+          <span class="post-tag">{{ tag }}</span>
+        {% endfor %}
+      </span>
+      {% endif %}
+      {% if page.reading_time %}
+      <span>◷ {{ page.reading_time }} min read</span>
+      {% endif %}
+    </div>
+  </header>
 
-<p class="view">by {{ page.author | default: site.author }}</p>
+  <div class="post-content">
+    {{ content }}
+  </div>
 
-{{content}}
+  <footer class="post-footer">
+    <nav class="post-nav" aria-label="Post navigation">
+      {% if page.previous.url %}
+      <a class="prev" href="{{ page.previous.url | relative_url }}">{{ page.previous.title }}</a>
+      {% else %}
+      <span></span>
+      {% endif %}
 
-{% if page.tags %}
-  <small>tags: <em>{{ page.tags | join: "</em> - <em>" }}</em></small>
-{% endif %}
+      {% if page.next.url %}
+      <a class="next" href="{{ page.next.url | relative_url }}">{{ page.next.title }}</a>
+      {% endif %}
+    </nav>
+  </footer>
+</article>

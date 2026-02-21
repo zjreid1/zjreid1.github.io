@@ -1,0 +1,51 @@
+---
+layout: default
+---
+
+<section class="home-hero">
+  <p class="hero-eyebrow">{{ site.hero_eyebrow | default: "welcome // system online" }}</p>
+  <h1 class="hero-name">{{ site.title }}</h1>
+  <p class="hero-tagline">{{ site.tagline | default: "explorer of liminal spaces between the digital and the wild" }}</p>
+
+  <nav class="hero-nav-cards" aria-label="Main sections">
+    <a href="{{ '/projects/' | relative_url }}" class="hero-card hero-card--projects">
+      <span class="card-glyph">◈</span>
+      <span class="card-label">Projects</span>
+      <span class="card-desc">things i've built</span>
+    </a>
+    <a href="{{ '/cv/' | relative_url }}" class="hero-card hero-card--cv">
+      <span class="card-glyph">⊕</span>
+      <span class="card-label">CV</span>
+      <span class="card-desc">the official record</span>
+    </a>
+    <a href="{{ '/blog/' | relative_url }}" class="hero-card hero-card--blog">
+      <span class="card-glyph">✦</span>
+      <span class="card-label">Blog</span>
+      <span class="card-desc">thoughts & musings</span>
+    </a>
+  </nav>
+</section>
+
+{% if site.show_about_on_home %}
+<section class="home-about">
+  <p class="section-label">about</p>
+  {{ site.about_blurb | markdownify }}
+</section>
+{% endif %}
+
+{% assign recent_posts = site.posts | limit: 5 %}
+{% if recent_posts.size > 0 %}
+<section class="home-recent">
+  <p class="section-label">recent writings</p>
+  <ul class="recent-posts-list">
+    {% for post in recent_posts %}
+    <li class="recent-post-item">
+      <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+      <span class="post-date">{{ post.date | date: "%Y.%m.%d" }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+{{ content }}

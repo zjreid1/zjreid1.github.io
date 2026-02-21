@@ -1,0 +1,149 @@
+// ============================================
+// HOME PAGE
+// ============================================
+
+.home-hero {
+  padding: $space-xl 0;
+  position: relative;
+
+  .hero-eyebrow {
+    font-family: $font-ui;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: $accent-teal;
+    margin-bottom: $space-md;
+    animation: fadeInUp 0.6s ease both;
+
+    &::before {
+      content: '// ';
+      opacity: 0.5;
+    }
+  }
+
+  .hero-name {
+    font-family: $font-display;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    color: $accent-neon;
+    line-height: 1.1;
+    margin-bottom: $space-sm;
+    text-shadow: 0 0 40px rgba(57, 255, 138, 0.2);
+    animation: fadeInUp 0.6s 0.1s ease both;
+  }
+
+  .hero-tagline {
+    font-family: $font-body;
+    font-size: 1.25rem;
+    font-weight: 300;
+    color: $text-secondary;
+    font-style: italic;
+    margin-bottom: $space-sm;
+    animation: fadeInUp 0.6s 0.2s ease both;
+  }
+
+  .hero-nav-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $space-md;
+    animation: fadeInUp 0.6s 0.35s ease both;
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .hero-card {
+    @extend .card;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    padding: $space-lg $space-md;
+
+    .card-glyph {
+      font-size: 1.5rem;
+      display: block;
+      margin-bottom: $space-sm;
+    }
+
+    .card-label {
+      font-family: $font-ui;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: $text-secondary;
+      display: block;
+      margin-bottom: $space-xs;
+    }
+
+    .card-desc {
+      font-size: 0.85rem;
+      color: $text-muted;
+      font-family: $font-ui;
+    }
+
+    &:hover {
+      .card-glyph {
+        text-shadow: 0 0 20px currentColor;
+        animation: pulse-glyph 1s ease infinite;
+      }
+      .card-label {
+        color: $accent-soft;
+      }
+    }
+
+    &--projects .card-glyph { color: $accent-teal; }
+    &--cv .card-glyph       { color: $accent-amber; }
+    &--blog .card-glyph     { color: $accent-violet; }
+  }
+}
+
+// --- About blurb on home ---
+.home-about {
+  margin: $space-xs 0 $space-xs;
+  padding-top: 0px;
+  border-top: 1px solid $border-subtle;
+  animation: fadeInUp 0.6s 0.5s ease both;
+
+  p {
+    font-size: 1.1rem;
+    max-width: 680px;
+  }
+}
+
+// --- Recent posts on home ---
+.home-recent {
+  margin-top: $space-md;
+
+  .recent-posts-list {
+    list-style: none;
+    padding: 0;
+    margin-top: $space-md;
+  }
+
+  .recent-post-item {
+    padding: $space-md 0;
+    border-bottom: 1px solid $border-subtle;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: $space-md;
+
+    &:last-child { border-bottom: none; }
+
+    a {
+      font-family: $font-body;
+      font-size: 1.05rem;
+      color: $text-primary;
+
+      &:hover { color: $accent-soft; }
+    }
+
+    .post-date {
+      font-family: $font-ui;
+      font-size: 0.72rem;
+      color: $text-muted;
+      white-space: nowrap;
+      letter-spacing: 0.05em;
+    }
+  }
+}

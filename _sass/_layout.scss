@@ -1,0 +1,129 @@
+// ============================================
+// LAYOUT
+// ============================================
+
+.site-wrapper {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  max-width: $max-width;
+  margin: 0 auto;
+  padding: ($nav-height + $space-xs) $space-lg $space-xs;
+  width: 100%;
+}
+
+// --- Page Header ---
+.page-header {
+  margin-bottom: $space-xl;
+  padding-bottom: $space-lg;
+  border-bottom: 1px solid $border-subtle;
+  position: relative;
+
+  .page-title {
+    font-family: $font-display;
+    font-size: 1.8rem;
+    color: $accent-neon;
+    margin-bottom: $space-sm;
+
+    &::before {
+      content: '> ';
+      color: $accent-teal;
+      opacity: 0.6;
+    }
+  }
+
+  .page-subtitle {
+    color: $text-secondary;
+    font-family: $font-ui;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+  }
+}
+
+// --- Section headings in content ---
+.section-label {
+  font-family: $font-ui;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: $accent-teal;
+  margin-bottom: $space-sm;
+
+  &::before {
+    content: '//';
+    margin-right: $space-xs;
+    opacity: 0.5;
+  }
+}
+
+// --- Cards ---
+.card {
+  background: $bg-card;
+  border: 1px solid $border-subtle;
+  border-radius: $border-radius-lg;
+  padding: $space-lg;
+  transition: border-color $transition-base, box-shadow $transition-base;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, $accent-neon, transparent);
+    opacity: 0;
+    transition: opacity $transition-base;
+  }
+
+  &:hover {
+    border-color: $border-glow;
+    box-shadow: 0 0 24px rgba(57, 255, 138, 0.06), 0 4px 24px rgba(0,0,0,0.4);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+// --- Footer ---
+.site-footer {
+  text-align: center;
+  padding: $space-lg;
+  border-top: 1px solid $border-subtle;
+  font-family: $font-ui;
+  font-size: 0.75rem;
+  color: $text-muted;
+  position: relative;
+  z-index: 1;
+
+  .footer-sigil {
+    display: block;
+    margin-bottom: $space-sm;
+    color: $accent-teal;
+    font-size: 1rem;
+    letter-spacing: 0.5em;
+  }
+
+  a {
+    color: $text-muted;
+    &:hover { color: $accent-soft; }
+  }
+}
+
+// --- Responsive ---
+@media (max-width: 640px) {
+  .main-content {
+    padding: ($nav-height + $space-lg) $space-md $space-xl;
+  }
+
+  h1 { font-size: 1.5rem; }
+}

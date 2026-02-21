@@ -1,56 +1,82 @@
-# Welcome to Jekyll!
-#
-# This config file is meant for settings that affect your whole blog, values
-# which you are expected to set up once and rarely edit after that. If you find
-# yourself editing this file very often, consider using Jekyll's data files
-# feature for the data you need to update frequently.
-#
-# For technical reasons, this file is *NOT* reloaded automatically when you use
-# 'bundle exec jekyll serve'. If you change this file, please restart the server process.
-#
-# If you need help with YAML syntax, here are some quick references for you: 
-# https://learn-the-web.algonquindesign.ca/topics/markdown-yaml-cheat-sheet/#yaml
-# https://learnxinyminutes.com/docs/yaml/
-#
-# Site settings
-# These are used to personalize your new site. If you look in the HTML files,
-# you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
-# You can create any custom variable you would like, and they will be accessible
-# in the templates via {{ site.myvariable }}.
+# ============================================
+# MYCELIUM GRID — Jekyll Configuration
+# ============================================
 
-title: Random Void Bits
-email: your-email@example.com
-description: >- # this means to ignore newlines until "baseurl:"
-  This site is for updates, errata, and random thoughts/projects.
-baseurl:  # the subpath of your site, e.g. /blog
-url:  # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: 
-github_username:  
+# -- Site Identity --
+title: "Zöe"
+tagline: "Aspring IAM Architect.  Explorer of National Parks, Cybersecurity, and Critical Theory."
+description: "Personal site — projects, writings, and the space between."
+baseurl: ""         # Leave empty if deploying to username.github.io
+url: "https://yourusername.github.io"
 
-# Build settings
-# theme: minima
-remote_theme: pages-themes/hacker
+# -- Author --
+author:
+  name: "Your Name"
+  email: "you@example.com"
+
+# -- Social (optional — leave blank to hide) --
+github_username:   "yourusername"
+linkedin_username: ""
+
+# -- Navigation brand text --
+nav_brand: "~/Zöe R"
+
+# -- Home page options --
+show_about_on_home: true
+about_blurb: |
+  Hi, I'm Zöe.  
+  I build communities, learn voraciously, and love nature 🌲🏔️🦌🌿🏕️.  
+  In this space you'll find my musings, projects, and random thoughts.
+
+# -- Footer --
+footer_tagline: "Staying grounded.  Looking towards the stars.  Eyes on the horizon of endless possibilities."
+
+# -- Build settings --
+markdown: kramdown
+highlighter: rouge
+permalink: /blog/:year/:month/:day/:title/
+
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: 'highlight'
+
+# -- Plugins --
 plugins:
-  - jekyll-remote-theme
   - jekyll-feed
-  
+  - jekyll-seo-tag
+  - jekyll-sitemap
 
-# Exclude from processing.
-# The following items will not be processed, by default.
-# Any item listed under the `exclude:` key here will be automatically added to
-# the internal "default list".
-#
-# Excluded items can be processed by explicitly listing the directories or
-# their entries' file path in the `include:` list.
-#
-# exclude:
-#   - .sass-cache/
-#   - .jekyll-cache/
-#   - gemfiles/
-#   - Gemfile
-#   - Gemfile.lock
-#   - node_modules/
-#   - vendor/bundle/
-#   - vendor/cache/
-#   - vendor/gems/
-#   - vendor/ruby/
+# -- Collections --
+collections:
+  projects:
+    output: true
+    permalink: /projects/:name/
+
+# -- Defaults --
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+  - scope:
+      path: ""
+      type: "projects"
+    values:
+      layout: "page"
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "page"
+
+# -- Exclude from build --
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - README.md
+  - "*.sh"

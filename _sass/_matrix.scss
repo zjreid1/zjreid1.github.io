@@ -1,0 +1,34 @@
+// ============================================
+// MATRIX RAIN CANVAS
+// ============================================
+
+#matrix-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  opacity: 0.035;
+  pointer-events: none;
+}
+
+// --- Floating spores / particles (whimsy) ---
+.spore {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  animation: float-spore linear infinite;
+  opacity: 0;
+
+  &--neon {
+    background: radial-gradient(circle, rgba(57, 255, 138, 0.6), transparent);
+  }
+  &--teal {
+    background: radial-gradient(circle, rgba(45, 212, 191, 0.5), transparent);
+  }
+  &--amber {
+    background: radial-gradient(circle, rgba(245, 200, 66, 0.4), transparent);
+  }
+}

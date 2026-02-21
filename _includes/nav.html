@@ -1,0 +1,18 @@
+<nav class="site-nav" role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="{{ '/' | relative_url }}" class="nav-brand" aria-label="{{ site.title }} home">
+      {{ site.nav_brand | default: site.title }}
+      <span class="brand-cursor" aria-hidden="true"></span>
+    </a>
+
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle navigation">
+      [menu]
+    </button>
+
+    <ul class="nav-links" id="nav-links" role="list">
+      <li><a href="{{ '/projects/' | relative_url }}" {% if page.url contains 'projects' %}class="active" aria-current="page"{% endif %}>Projects</a></li>
+      <li><a href="{{ '/cv/' | relative_url }}" {% if page.url contains 'cv' %}class="active" aria-current="page"{% endif %}>CV</a></li>
+      <li><a href="{{ '/blog/' | relative_url }}" {% if page.url contains 'blog' %}class="active" aria-current="page"{% endif %}>Blog</a></li>
+    </ul>
+  </div>
+</nav>

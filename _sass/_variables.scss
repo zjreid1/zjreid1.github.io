@@ -1,0 +1,47 @@
+// ============================================
+// MYCELIUM GRID — Variables
+// Soft Cyberpunk + Forest + Matrix + Whimsy
+// ============================================
+
+// --- Color Palette ---
+$bg-void:         #0a0d0f;       // near-black, forest floor dark
+$bg-surface:      #0f1614;       // deep forest green-black
+$bg-card:         #141c18;       // slightly lifted surface
+$bg-elevated:     #1a2520;       // mossy dark
+
+$accent-neon:     #39ff8a;       // matrix green / bioluminescence
+$accent-soft:     #7de8b0;       // muted mint — readable on dark
+$accent-teal:     #2dd4bf;       // teal cyber highlight
+$accent-amber:    #f5c842;       // whimsy gold — firefly glow
+$accent-violet:   #9f7aea;       // soft purple — dusk through leaves
+
+$text-primary:    #d4f5e2;       // soft green-white, easy on eyes
+$text-secondary:  #8ab8a0;       // muted sage
+$text-muted:      #4a6b5a;       // faint moss
+
+$border-glow:     rgba(57, 255, 138, 0.2);
+$border-subtle:   rgba(57, 255, 138, 0.08);
+
+// --- Typography ---
+$font-display:    'Share Tech Mono', monospace;  // cyber terminal feel
+$font-body:       'Crimson Pro', serif;           // organic, readable warmth
+$font-ui:         'DM Mono', monospace;           // clean UI labels
+
+// --- Spacing ---
+$space-xs:  0.25rem;
+$space-sm:  0.5rem;
+$space-md:  1rem;
+$space-lg:  2rem;
+$space-xl:  4rem;
+$space-2xl: 6rem;
+
+// --- Sizing ---
+$max-width:       860px;
+$nav-height:      4rem;
+$border-radius:   4px;
+$border-radius-lg: 8px;
+
+// --- Transitions ---
+$transition-fast:   0.15s ease;
+$transition-base:   0.3s ease;
+$transition-slow:   0.6s ease;

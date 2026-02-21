@@ -1,0 +1,20 @@
+<footer class="site-footer" role="contentinfo">
+  <span class="footer-sigil" aria-hidden="true">◈ ✦ ◈</span>
+  <p>
+    {{ site.title }} &mdash;
+    {% if site.footer_tagline %}
+      {{ site.footer_tagline }}
+    {% else %}
+      rooted in code, growing toward light
+    {% endif %}
+  </p>
+  <p style="margin-top: 0.5rem;">
+    {% if site.github_username %}
+      <a href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener">github</a> &middot;
+    {% endif %}
+    {% if site.linkedin_username %}
+      <a href="https://linkedin.com/in/{{ site.linkedin_username }}" target="_blank" rel="noopener">linkedin</a> &middot;
+    {% endif %}
+    <a href="{{ '/feed.xml' | relative_url }}">rss</a>
+  </p>
+</footer>
