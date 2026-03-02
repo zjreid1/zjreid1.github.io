@@ -56,23 +56,32 @@ permalink: /cv/
       <ul> Documented multiple business processes, databases, and dashboards to ensure sucessful delivery of projects. </ul>
     
       </div>
-  </div>
+
 
   <div class="cv-entry">
     <div class="entry-header">
-      <span class="entry-title">Network and Desktop Support Technician</span>
-      <span class="entry-period">March 2024 - March 2025</span>
+      <span class="entry-title">Analyst</span>
+      <span class="entry-period">January 2018 - August 2021</span>
     </div>
-    <div class="entry-org">Special Order Systems (SOS)</div>
+    <div class="entry-org">CVS Caremark</div>
     <div class="entry-desc">
-      <ul> Completed 100+ phone/email tickets involving software updates, remote hardware/software installation, network issues, and device setup. </ul>
+      <ul> Decreased incorrect case conversion rate by 35% via Python script with Pandas data analysis library. 
+      </ul>
 
-      <ul> Remotely monitor, support, and manage 2000+ devices to include printers, mobile devices, networking equipment, and servers for alerts and uptime. </ul>
+  <ul> 
+    Created and maintained internal tools for the Medicare Part D Grievance department; reducing resolution time by 10% and error rates by 15%.
+   </ul>
     
-      <ul> Used various techniques to diagnose, analyze, and troubleshoot hardware, network, and security issues for users; reducing overall callback rate by 15% </ul>
+<ul> Created custom KPI reports and dashboards for use by leadership and team members to enhance productivity. </ul>
+
     
-    </div>
+
   </div>
+  
+  
+  </div>
+
+
 
 </section>
 
