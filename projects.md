@@ -27,20 +27,35 @@ permalink: /projects/
       <span class="project-status project-status--active">active</span>
     </div>
     <p class="project-desc">
-      Cybersecurity Sacramento is a group in the greater Sacramento County area associated with DEF CON Groups for hackers, makers, tinkerers and security enthusiasts/professionals/students to meet and share projects/ideas. P
+      Cybersecurity Sacramento is a group in the greater Sacramento County area associated with DEF CON Groups for hackers, makers, tinkerers and security enthusiasts/professionals/students to meet and share projects/ideas.
     </p>
     <div class="project-tags">
-      <span>python</span>
-      <span>security</span>
-      <span>educational outreach</span>
+      <span>Python</span>
+      <span>Security</span>
+      <span>Educational outreach</span>
     </div>
     <div class="project-links">
-      <a href="#">https://www.dc916.com/</a>
+      <a href="https://www.dc916.com/">https://www.dc916.com/</a>
     </div>
   </div>
 
   <!-- Add more project cards here -->
 
+  <div class="project-card">
+    <div class="project-header">
+      <span class="project-name">SAML Salesforce/Okta Integration</span>
+    </div>
+    <p class="project-desc">
+      An IAM project showcasing connecting and troubleshooting Okta users allowing them to access the Salesforce platform.
+    </p>
+    <div class="project-tags">
+      <span>Okta</span>
+      <span>IAM</span>
+      <span>Learning</span>
+    </div>
+    <div class="project-links">
+    </div>
+  </div>
 </div>
 
 {{ content }}
