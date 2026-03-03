@@ -31,6 +31,14 @@ From the central Okta dashboard we can also start setting account management pol
 
 With Okta, the integration is fairly straightforward with app integrations and SSO options and luckily Salesforce makes it easy on their side as well with identity and SSO settings.   
 
+<img width="823" height="604" alt="image" src="https://github.com/user-attachments/assets/54c180e3-e676-4df2-be88-7da5107d2677" />
+
+<img width="764" height="602" alt="image" src="https://github.com/user-attachments/assets/dfdd53ca-c3f2-4796-ab94-f7762f69c8ef" />
+
+<img width="883" height="598" alt="image" src="https://github.com/user-attachments/assets/78eb970f-4a41-4710-a262-8107abf4d067" />
+
+
+
 ### Troubleshooting
 
 One of the issues that I ran into was that despite the fact that I had everything set up correctly on the Okta side, I did have to re-check my settings on the Salesforce side as when I tried to login to one of the users I set up previously I ran into an SSO error.
@@ -41,13 +49,20 @@ The initial Salesforce error message wasn't very useful so I opted to dive into 
 
 After fixing the issue the example user was able to login and I could verify it from both the Okta and Salseforce logs.
 
+<img width="791" height="529" alt="image" src="https://github.com/user-attachments/assets/0d413bf9-f452-46ac-bb55-7cb48731f4b8" />
+
+<img width="1067" height="455" alt="image" src="https://github.com/user-attachments/assets/e47a85d0-dbf5-44c8-87f3-10098e647425" />
+
 ### Lessons
 
 1.  Have good documentation. It makes everything infinitely easier and helps not only you, but anyone who may come after you.
 
 2.  It's easy to get lost in configuration details.  While there is no cutting, the addage of "check config twice, implement once" fits nicely here as I likely would have avoided my issue had I double checked the configs.
 
-3.  Analyze an issue from all sides.  
+3.  Analyze an issue from all sides.
+
+<img width="593" height="442" alt="image" src="https://github.com/user-attachments/assets/314bb34f-9b27-4c68-9691-a1b6b83660a1" />
+
 
 
 ### Conclusion and Future Expansions
