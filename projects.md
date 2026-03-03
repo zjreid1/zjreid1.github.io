@@ -23,21 +23,19 @@ permalink: /projects/
   <!-- EXAMPLE PROJECT — delete and replace with your own -->
   <div class="project-card">
     <div class="project-header">
-      <span class="project-name">Project Name</span>
+      <span class="project-name">Cybersecurity Sacramento</span>
       <span class="project-status project-status--active">active</span>
     </div>
     <p class="project-desc">
-      A brief description of what this project does and why it matters.
-      Keep it punchy — one or two sentences.
+      Cybersecurity Sacramento is a group in the greater Sacramento County area associated with DEF CON Groups for hackers, makers, tinkerers and security enthusiasts/professionals/students to meet and share projects/ideas. P
     </p>
     <div class="project-tags">
       <span>python</span>
       <span>security</span>
-      <span>identity</span>
+      <span>educational outreach</span>
     </div>
     <div class="project-links">
-      <a href="#">github</a>
-      <a href="#">demo</a>
+      <a href="#">https://www.dc916.com/</a>
     </div>
   </div>
 
