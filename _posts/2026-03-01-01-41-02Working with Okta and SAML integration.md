@@ -28,3 +28,26 @@ Having gone through and set up Okta and Salesforce dev accounts, the first gener
 From the central Okta dashboard we can also start setting account management policies and rules and getting into the details if we want.  While going through the details is useful to know where things can get messy and complicated, for this writeup we'll continue on with getting Salesforce set up and connected.
 
 With Okta, the integration is fairly straightforward with app integrations and SSO options and luckily Salesforce makes it easy on their side as well with identity and SSO settings.   
+
+### Troubleshooting
+
+One of the issues that I ran into was that despite the fact that I had everything set up correctly on the Okta side, I did have to re-check my settings on the Salesforce side as when I tried to login to one of the users I set up previously I ran into an SSO error.
+
+The way I went about troubleshooting was my usual methodology of "Read, Search, Ask" which can be further refined into "Narrow down the problem, Identify a potential solution, Try something (and hope it works), Repeat as needed".
+
+The initial Salesforce error message wasn't very useful so I opted to dive into the logs, and I noticed that the login was hitting the Okta side of things but not the Salesforce side, so I dug a bit further into the Salesforce side and noticed that I had copied/pasted an incorrect link leading to the SSO error.
+
+After fixing the issue the example user was able to login and I could verify it from both the Okta and Salseforce logs.
+
+### Lessons
+
+1.  Have good documentation. It makes everything infinitely easier and helps not only you, but anyone who may come after you.
+
+2.  It's easy to get lost in configuration details.  While there is no cutting, the addage of "check config twice, implement once" fits nicely here as I likely would have avoided my issue had I double checked the configs.
+
+3.  Analyze an issue from all sides.  
+
+
+### Conclusion and Future Expansions
+
+Overall this was a fun project and a fun dive into implementing practical IAM/SAML.  I know that I want to build on this with future integrations and concepts such as JML, SCIM, and connecting it to AD if I can.
