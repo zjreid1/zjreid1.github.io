@@ -5,7 +5,7 @@ date: 2026-03-01-01-41-02
 categories: [Uncategorized]
 ---
 
-To get the slideshow/presentation that goes with this post, check [here](/assets/saml.pdf)
+To get the slideshow/presentation that goes with this post, check [here](https://github.com/zjreid1/zjreid1.github.io/blob/main/assets/SAML.pdf)
 
 ### Why
 
