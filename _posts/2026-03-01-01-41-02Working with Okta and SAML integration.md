@@ -5,6 +5,8 @@ date: 2026-03-01-01-41-02
 categories: [Uncategorized]
 ---
 
+To get the slideshow/presentation that goes with this post, check [here](/assets/saml.pdf)
+
 ### Why
 
 This writeup covers how I went through and set up a Salesforce integration using a developer Okta and Salesforce account.
