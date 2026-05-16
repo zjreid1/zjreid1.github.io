@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yosemite National Park — Hiking Trails</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<style>
+  :root {
+    --granite:   #2c2c2e;
+    --forest:    #2d4a2d;
+    --meadow:    #4a7c4a;
+    --sky:       #5b8fa8;
+    --gold:      #c9a84c;
+    --mist:      #f4f1eb;
+    --parchment: #ede8dc;
+    --cream:     #faf8f3;
+    --easy:      #3a7d44;
+    --moderate:  #b87333;
+    --strenuous: #b03030;
+    --em:        #6b5030;
+    --ms:        #7a4020;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--cream); color: var(--granite); font-family: 'Source Sans 3', sans-serif; font-weight: 300; min-height: 100vh; }
+
+  /* HERO */
+  .hero { background: linear-gradient(160deg, #1a2e1a 0%, #2d4a2d 45%, #3b5f5b 100%); padding: 52px 40px 44px; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+  .hero-inner { position: relative; max-width: 1200px; margin: 0 auto; }
+  .hero-badge { display: inline-block; font-family: 'Source Sans 3', sans-serif; font-weight: 600; font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(201,168,76,0.4); padding: 5px 12px; border-radius: 2px; margin-bottom: 18px; }
+  .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 14px; }
+  .hero h1 span { color: var(--gold); }
+  .hero p { color: rgba(255,255,255,0.65); font-size: 15px; max-width: 560px; line-height: 1.6; }
+  .hero-stats { display: flex; gap: 32px; margin-top: 28px; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--gold); display: block; }
+  .stat-label { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.5); }
+
+  /* CONTROLS */
+  .controls { background: var(--parchment); border-bottom: 2px solid #d9d3c7; padding: 16px 40px; position: sticky; top: 0; z-index: 200; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .controls label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #7a7060; margin-right: 4px; }
+  .controls select, .controls input { font-family: 'Source Sans 3', sans-serif; font-size: 13px; padding: 6px 12px; border: 1px solid #c8c0b0; border-radius: 3px; background: #fff; color: var(--granite); outline: none; transition: border-color 0.2s; }
+  .controls select:focus, .controls input:focus { border-color: var(--meadow); }
+  .controls input { min-width: 180px; }
+  .reset-btn { margin-left: auto; font-family: 'Source Sans 3', sans-serif; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 14px; background: transparent; color: #7a7060; border: 1px solid #c8c0b0; border-radius: 3px; cursor: pointer; transition: all 0.2s; }
+  .reset-btn:hover { background: var(--granite); color: #fff; border-color: var(--granite); }
+
+  /* MAIN */
+  main { max-width: 1400px; margin: 0 auto; padding: 40px; }
+
+  /* SECTION */
+  .section { margin-bottom: 52px; }
+  .section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid var(--forest); }
+  .section-icon { width: 40px; height: 40px; background: var(--forest); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 18px; flex-shrink: 0; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: var(--forest); }
+  .section-subtitle { font-size: 12px; color: #8a8070; margin-top: 2px; letter-spacing: 0.05em; }
+  .section-count { margin-left: auto; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #9a907a; }
+
+  /* WARNING */
+  .warning { background: #fff8e6; border: 1px solid #e0c060; border-left: 4px solid var(--gold); border-radius: 4px; padding: 10px 16px; font-size: 13px; color: #6a5000; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; border-radius: 6px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); border: 1px solid #d9d3c7; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; background: #fff; }
+  thead th { background: var(--granite); color: rgba(255,255,255,0.85); font-family: 'Source Sans 3', sans-serif; font-weight: 600; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; padding: 12px 14px; text-align: left; white-space: nowrap; cursor: pointer; user-select: none; transition: background 0.15s; }
+  thead th:hover { background: #3a3a3c; }
+  thead th .sort-arrow { margin-left: 4px; opacity: 0.4; font-size: 9px; }
+  thead th.sorted .sort-arrow { opacity: 1; color: var(--gold); }
+  tbody tr { transition: background 0.1s; }
+  tbody tr:nth-child(even) { background: #faf8f3; }
+  tbody tr:hover { background: #f0ede4; }
+  tbody tr.hidden { display: none; }
+  td { padding: 11px 14px; vertical-align: top; border-bottom: 1px solid #ebe6dc; }
+  td:first-child { font-weight: 600; color: #1a1a1a; }
+
+  /* BADGES */
+  .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap; }
+  .badge-easy      { background: #e8f5e9; color: var(--easy);      border: 1px solid #b2dfbd; }
+  .badge-moderate  { background: #fff3e0; color: var(--moderate);  border: 1px solid #ffcc80; }
+  .badge-strenuous { background: #fce8e8; color: var(--strenuous); border: 1px solid #ffaaaa; }
+  .badge-em        { background: #fff8e6; color: var(--em);        border: 1px solid #e0c060; }
+  .badge-ms        { background: #fdeee8; color: var(--ms);        border: 1px solid #ffbb88; }
+
+  /* MAP SECTION */
+  .map-section { margin: 0; background: var(--granite); }
+  .map-header { max-width: 1400px; margin: 0 auto; padding: 36px 40px 24px; }
+  .map-header-inner { display: flex; align-items: center; gap: 16px; padding-bottom: 18px; border-bottom: 2px solid rgba(201,168,76,0.4); }
+  .map-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; color: #fff; }
+  .map-subtitle { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 3px; }
+  .map-icon { width: 44px; height: 44px; background: rgba(201,168,76,0.2); border: 1px solid rgba(201,168,76,0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+
+  .map-legend { display: flex; gap: 20px; flex-wrap: wrap; padding: 16px 0 0; }
+  .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: rgba(255,255,255,0.7); }
+  .legend-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.4); flex-shrink: 0; }
+  .legend-dot.easy       { background: #3a7d44; }
+  .legend-dot.moderate   { background: #b87333; }
+  .legend-dot.strenuous  { background: #b03030; }
+  .legend-dot.mixed      { background: #7a6020; }
+  .legend-dot.visitor    { background: #5b8fa8; }
+
+  #map { height: 620px; width: 100%; }
+
+  /* Leaflet popup override */
+  .leaflet-popup-content-wrapper { border-radius: 6px; box-shadow: 0 4px 20px rgba(0,0,0,0.25); font-family: 'Source Sans 3', sans-serif; }
+  .leaflet-popup-content { margin: 14px 16px; font-size: 13px; line-height: 1.5; min-width: 200px; }
+  .popup-name { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: #1a2e1a; margin-bottom: 6px; }
+  .popup-region { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #7a7060; margin-bottom: 8px; }
+  .popup-row { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: #444; margin-top: 3px; }
+  .popup-label { color: #888; }
+  .popup-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-top: 6px; }
+
+  /* FOOTER */
+  footer { text-align: center; padding: 28px 20px; font-size: 12px; color: #9a907a; border-top: 1px solid #d9d3c7; background: var(--cream); letter-spacing: 0.06em; }
+  footer a { color: var(--meadow); text-decoration: none; }
+
+  @media (max-width: 700px) {
+    .hero { padding: 36px 20px 32px; }
+    .controls { padding: 12px 16px; }
+    main { padding: 24px 16px; }
+    .map-header { padding: 24px 16px 16px; }
+    #map { height: 420px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">🏕 Yosemite National Park · California</div>
+    <h1>Hiking <span>Trails</span> Guide</h1>
+    <p>A complete reference to Yosemite's day hikes — from easy valley strolls to strenuous summit climbs across all regions of the park.</p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">70+</span><span class="stat-label">Trails Listed</span></div>
+      <div class="stat"><span class="stat-num">800+</span><span class="stat-label">Total Trail Miles</span></div>
+      <div class="stat"><span class="stat-num">6</span><span class="stat-label">Park Regions</span></div>
+      <div class="stat"><span class="stat-num">Oct 8–10</span><span class="stat-label">Your Trip Dates</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <label>Search:</label>
+  <input type="text" id="searchBox" placeholder="Trail name or feature…" oninput="filterAll()">
+  <label>Difficulty:</label>
+  <select id="diffFilter" onchange="filterAll()">
+    <option value="">All</option>
+    <option value="Easy">Easy</option>
+    <option value="Moderate">Moderate</option>
+    <option value="Strenuous">Strenuous</option>
+  </select>
+  <label>Region:</label>
+  <select id="regionFilter" onchange="filterAll()">
+    <option value="">All Regions</option>
+    <option value="valley">Yosemite Valley</option>
+    <option value="glacier">Glacier Point Road</option>
+    <option value="southern">Southern Yosemite</option>
+    <option value="tioga">Tioga Road / High Country</option>
+    <option value="hetch">Hetch Hetchy &amp; Big Oak Flat</option>
+  </select>
+  <button class="reset-btn" onclick="resetFilters()">↺ Reset</button>
+</div>
+
+<main>
+
+<!-- YOSEMITE VALLEY -->
+<div class="section" data-region="valley">
+  <div class="section-header">
+    <div class="section-icon">🏔</div>
+    <div><div class="section-title">Yosemite Valley</div><div class="section-subtitle">Most popular trailheads · Accessible year-round</div></div>
+    <div class="section-count" id="count-valley"></div>
+  </div>
+  <div class="table-wrap"><table id="table-valley">
+    <thead><tr>
+      <th onclick="sortTable('table-valley',0,this)">Trail Name <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-valley',1,this)">Trailhead <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-valley',2,this)">Difficulty <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-valley',3,this)">Elev. Gain <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-valley',4,this)">Type <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-valley',5,this)">Distance <span class="sort-arrow">⇅</span></th>
+      <th>Features</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>Bridalveil Fall Trail</td><td>Bridalveil Fall Parking Area</td><td><span class="badge badge-easy">Easy</span></td><td>80 ft</td><td>Out &amp; Back</td><td>0.5 mi RT</td><td>Iconic waterfall, valley views</td></tr>
+      <tr><td>Lower Yosemite Fall Trail</td><td>Shuttle Stop #6</td><td><span class="badge badge-easy">Easy</span></td><td>50 ft</td><td>Loop</td><td>1.0 mi</td><td>Tallest waterfall in N. America (base), paved path</td></tr>
+      <tr><td>Cook's Meadow / Sentinel Loop</td><td>Shuttle Stop #5 / Valley Floor</td><td><span class="badge badge-easy">Easy</span></td><td>Flat</td><td>Loop</td><td>2.25 mi</td><td>Half Dome views, wildflower meadow, wildlife</td></tr>
+      <tr><td>Happy Isles Nature Walk</td><td>Happy Isles — Shuttle Stop #16</td><td><span class="badge badge-easy">Easy</span></td><td>&lt;10 ft</td><td>Out &amp; Back</td><td>0.5 mi</td><td>Merced River, nature exhibits, family-friendly</td></tr>
+      <tr><td>Vernal Fall Footbridge</td><td>Happy Isles — Shuttle Stop #16</td><td><span class="badge badge-em">Easy–Moderate</span></td><td>300 ft</td><td>Out &amp; Back</td><td>2.0 mi RT</td><td>Merced River gorge, Vernal Fall views</td></tr>
+      <tr><td>Mirror Lake Loop</td><td>Mirror Lake — Shuttle Stop #17</td><td><span class="badge badge-em">Easy–Moderate</span></td><td>100–200 ft</td><td>Loop</td><td>2–5 mi</td><td>Reflective lake, Half Dome views, Tenaya Canyon</td></tr>
+      <tr><td>Artist Point</td><td>Tunnel View Parking</td><td><span class="badge badge-moderate">Moderate</span></td><td>500 ft</td><td>Out &amp; Back</td><td>2.0 mi RT</td><td>Valley overlook, El Capitan, Bridalveil Fall</td></tr>
+      <tr><td>Inspiration Point</td><td>Tunnel View / Wawona Road</td><td><span class="badge badge-moderate">Moderate</span></td><td>1,000 ft</td><td>Out &amp; Back</td><td>2.6 mi RT</td><td>Panoramic valley views, El Cap, Bridalveil</td></tr>
+      <tr><td>Columbia Rock</td><td>Yosemite Falls Trailhead (Shuttle #7)</td><td><span class="badge badge-moderate">Moderate</span></td><td>1,000 ft</td><td>Out &amp; Back</td><td>3.0 mi RT</td><td>Valley views, stepping stone to Upper Falls</td></tr>
+      <tr><td>Mist Trail (to Vernal Fall)</td><td>Happy Isles — Shuttle Stop #16</td><td><span class="badge badge-moderate">Moderate</span></td><td>1,000 ft</td><td>Out &amp; Back</td><td>3.0 mi RT</td><td>Vernal Fall, granite steps, mist spray</td></tr>
+      <tr><td>Turtleback Dome</td><td>Off Hwy 140 near El Portal</td><td><span class="badge badge-moderate">Moderate</span></td><td>360 ft</td><td>Out &amp; Back</td><td>1.2 mi RT</td><td>Dome scramble, valley views</td></tr>
+      <tr><td>Valley Loop Trail</td><td>Multiple Valley Trailheads</td><td><span class="badge badge-moderate">Moderate</span></td><td>Mostly flat</td><td>Loop</td><td>6.5–13 mi</td><td>Full valley scenery, meadows, river, El Cap views</td></tr>
+      <tr><td>Mist Trail (to Nevada Fall)</td><td>Happy Isles — Shuttle Stop #16</td><td><span class="badge badge-strenuous">Strenuous</span></td><td>2,000 ft</td><td>Out &amp; Back</td><td>7.0 mi RT</td><td>Vernal &amp; Nevada Falls, stunning granite gorge</td></tr>
+      <tr><td>Snow Creek Trail</td><td>Mirror Lake — Shuttle Stop #17</td><td><span class="badge badge-strenuous">Strenuous</span></td><td>2,700 ft</td><td>Out &amp; Back</td><td>7.2–9.4 mi RT</td><td>North Rim views, solitude, switchbacks</td></tr>
+      <tr><td>Upper Yosemite Falls Trail</td><td>Yosemite Falls TH — Shuttle #7</td><td><span class="badge badge-strenuous">Strenuous</span></td><td>2,700 ft</td><td>Out &amp; Back</td><td>7.6 mi RT</td><td>Top of tallest waterfall in North America</td></tr>
+      <tr><td>Four Mile Trail</td><td>Sentinel Rock / Valley Floor</td><td><span class="badge badge-strenuous">Strenuous</span></td><td>3,200 ft</td><td>One Way / O&amp;B</td><td>4.8 mi one way</td><td>Glacier Point views, Half Dome, Yosemite Falls</td></tr>
+      <tr><td>Panorama Trail</td><td>Glacier Point</td><td><span class="badge badge-strenuous">Strenuous</span></td><td>3,200 ft</td><td>One Way</td><td>8.5 mi one way</td><td>Nevada &amp; Vernal Falls, 360° panoramas</td></tr>
+      <tr><td>Pohono Trail</td><td>Tunnel View or Glacier Point</td><td><span class="badge badge-strenuous">Strenuous</span></td><td>3,700 ft</td><td>One Way</td><td>13 mi one way</td><td>Valley rim, multiple waterfalls, solitude</td></tr>
+      <tr><td>Half Dome Trail ⚠️ Permit Required</td><td>Happy Isles — Shuttle Stop #16</td><td><span class="badge badge-strenuous">Strenuous</span></td><td>4,800 ft</td><td>Out &amp; Back</td><td>14–16.4 mi RT</td><td>Iconic summit, cables, Yosemite Valley panorama</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- GLACIER POINT ROAD -->
+<div class="section" data-region="glacier">
+  <div class="section-header">
+    <div class="section-icon">🌄</div>
+    <div><div class="section-title">Glacier Point Road</div><div class="section-subtitle">South rim trails · Best for views &amp; domes · Open spring–fall</div></div>
+    <div class="section-count" id="count-glacier"></div>
+  </div>
+  <div class="table-wrap"><table id="table-glacier">
+    <thead><tr>
+      <th onclick="sortTable('table-glacier',0,this)">Trail Name <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-glacier',1,this)">Trailhead <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-glacier',2,this)">Difficulty <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-glacier',3,this)">Elev. Gain <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-glacier',4,this)">Type <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-glacier',5,this)">Distance <span class="sort-arrow">⇅</span></th>
+      <th>Features</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>Washburn Point</td><td>Washburn Point Pullout</td><td><span class="badge badge-easy">Easy</span></td><td>15 ft</td><td>Out &amp; Back</td><td>0.1 mi</td><td>Quick panoramic overlook, Half Dome</td></tr>
+      <tr><td>Glacier Point Overlook</td><td>Glacier Point Parking</td><td><span class="badge badge-easy">Easy</span></td><td>&lt;50 ft</td><td>Out &amp; Back</td><td>1.0 mi</td><td>Half Dome, Nevada Fall, full valley panorama</td></tr>
+      <tr><td>McGurk Meadow</td><td>McGurk Meadow TH — Glacier Point Rd</td><td><span class="badge badge-easy">Easy</span></td><td>100 ft</td><td>Out &amp; Back</td><td>1.8 mi RT</td><td>Wildflower meadow, historic cabin</td></tr>
+      <tr><td>Mono Meadow</td><td>Mono Meadow TH — Glacier Point Rd</td><td><span class="badge badge-easy">Easy</span></td><td>300 ft</td><td>Out &amp; Back</td><td>1.2 mi RT</td><td>Peaceful meadow, forest walk</td></tr>
+      <tr><td>Westfall Meadow</td><td>Westfall Meadow TH</td><td><span class="badge badge-easy">Easy</span></td><td>100 ft</td><td>Out &amp; Back</td><td>2.8 mi RT</td><td>Quiet meadow, shady forest</td></tr>
+      <tr><td>Taft Point &amp; the Fissures</td><td>Taft Point TH — Glacier Point Rd</td><td><span class="badge badge-moderate">Moderate</span></td><td>200 ft</td><td>Out &amp; Back</td><td>2.2 mi RT</td><td>Dramatic cliff fissures, El Cap &amp; valley views</td></tr>
+      <tr><td>Sentinel Dome</td><td>Taft Point / Sentinel Dome TH</td><td><span class="badge badge-moderate">Moderate</span></td><td>400 ft</td><td>Out &amp; Back</td><td>2.2 mi RT</td><td>360° panorama: Half Dome, El Cap, Yosemite Falls</td></tr>
+      <tr><td>Bridalveil Creek</td><td>Bridalveil Creek TH</td><td><span class="badge badge-moderate">Moderate</span></td><td>100 ft</td><td>Out &amp; Back</td><td>5.5 mi RT</td><td>Peaceful creek, old-growth forest</td></tr>
+      <tr><td>Illilouette Falls</td><td>Glacier Point</td><td><span class="badge badge-moderate">Moderate</span></td><td>1,400 ft</td><td>Out &amp; Back</td><td>4.0 mi RT</td><td>Secluded waterfall, valley views, less-traveled</td></tr>
+      <tr><td>Dewey, Crocker &amp; Stanford Points</td><td>Pohono TH / Tunnel View</td><td><span class="badge badge-ms">Moderate–Strenuous</span></td><td>300 ft</td><td>Out &amp; Back</td><td>7.8 mi RT</td><td>Rim views, solitude, dramatic cliffs</td></tr>
+      <tr><td>Ostrander Lake</td><td>Bridalveil Creek TH</td><td><span class="badge badge-strenuous">Strenuous</span></td><td>1,600 ft</td><td>Out &amp; Back</td><td>12.4 mi RT</td><td>Remote alpine lake, granite, solitude</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- SOUTHERN YOSEMITE -->
+<div class="section" data-region="southern">
+  <div class="section-header">
+    <div class="section-icon">🌲</div>
+    <div><div class="section-title">Southern Yosemite — Wawona &amp; Mariposa Grove</div><div class="section-subtitle">South entrance area · Giant sequoias · Open year-round</div></div>
+    <div class="section-count" id="count-southern"></div>
+  </div>
+  <div class="table-wrap"><table id="table-southern">
+    <thead><tr>
+      <th onclick="sortTable('table-southern',0,this)">Trail Name <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-southern',1,this)">Trailhead <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-southern',2,this)">Difficulty <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-southern',3,this)">Elev. Gain <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-southern',4,this)">Type <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-southern',5,this)">Distance <span class="sort-arrow">⇅</span></th>
+      <th>Features</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>Wawona Swinging Bridge Loop</td><td>Wawona Hotel Area</td><td><span class="badge badge-easy">Easy</span></td><td>&lt;50 ft</td><td>Loop</td><td>0.75 mi</td><td>Merced River, swimming hole</td></tr>
+      <tr><td>Wawona Meadow Loop 🐕 🚲</td><td>Wawona Golf Course</td><td><span class="badge badge-easy">Easy</span></td><td>&lt;50 ft</td><td>Loop</td><td>3.5 mi</td><td>Wildflower meadow, only dog &amp; bike-friendly trail in park</td></tr>
+      <tr><td>Mariposa Grove of Giant Sequoias</td><td>Mariposa Grove Welcome Plaza</td><td><span class="badge badge-em">Easy–Moderate</span></td><td>1,200 ft</td><td>Loop options</td><td>2.2–6+ mi</td><td>Grizzly Giant, Tunnel Tree, massive sequoias</td></tr>
+      <tr><td>Chilnualna Falls</td><td>Chilnualna Falls TH, Wawona</td><td><span class="badge badge-strenuous">Strenuous</span></td><td>2,300 ft</td><td>Out &amp; Back</td><td>8.4 mi RT</td><td>Multi-tiered waterfalls, granite slabs, solitude</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- TIOGA ROAD -->
+<div class="section" data-region="tioga">
+  <div class="section-header">
+    <div class="section-icon">⛰</div>
+    <div><div class="section-title">Tioga Road / High Country</div><div class="section-subtitle">Tuolumne Meadows &amp; beyond · Open May–Nov · Check conditions for Oct</div></div>
+    <div class="section-count" id="count-tioga"></div>
+  </div>
+  <div class="warning">⚠️ <strong>October Note:</strong> Tioga Road (Hwy 120) typically closes mid-to-late October due to snow. Confirm road status at <strong>209-372-0200</strong> before planning these hikes for Oct 8–10.</div>
+  <div class="table-wrap"><table id="table-tioga">
+    <thead><tr>
+      <th onclick="sortTable('table-tioga',0,this)">Trail Name <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-tioga',1,this)">Trailhead <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-tioga',2,this)">Difficulty <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-tioga',3,this)">Elev. Gain <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-tioga',4,this)">Type <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-tioga',5,this)">Distance <span class="sort-arrow">⇅</span></th>
+      <th>Features</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>Olmsted Point Walk</td><td>Olmsted Point Pullout</td><td><span class="badge badge-easy">Easy</span></td><td>&lt;100 ft</td><td>Out &amp; Back</td><td>0.25 mi</td><td>Tenaya Lake &amp; Half Dome views, glacial erratic boulders</td></tr>
+      <tr><td>Tenaya Lake Loop</td><td>Tenaya Lake Parking</td><td><span class="badge badge-easy">Easy</span></td><td>Flat</td><td>Loop</td><td>2.5 mi</td><td>Alpine lake, granite domes, swimming, picnicking</td></tr>
+      <tr><td>Tuolumne Meadows Stroll</td><td>Tuolumne Meadows VC</td><td><span class="badge badge-easy">Easy</span></td><td>Flat</td><td>Out &amp; Back</td><td>2.0 mi</td><td>Wildflower meadow, Cathedral Peaks, river</td></tr>
+      <tr><td>Parsons Lodge &amp; Soda Springs</td><td>Lembert Dome Parking</td><td><span class="badge badge-easy">Easy</span></td><td>Flat</td><td>Out &amp; Back</td><td>1.4 mi RT</td><td>Carbonated springs, historic lodge, meadow</td></tr>
+      <tr><td>Pothole Dome</td><td>Pothole Dome Parking (Tioga Rd)</td><td><span class="badge badge-easy">Easy</span></td><td>200 ft</td><td>Out &amp; Back</td><td>1.0 mi RT</td><td>Dome scramble, meadow views, river</td></tr>
+      <tr><td>Lukens Lake</td><td>White Wolf Road TH</td><td><span class="badge badge-easy">Easy</span></td><td>200 ft</td><td>Out &amp; Back</td><td>1.6 mi RT</td><td>Quiet alpine lake, wildflowers, family-friendly</td></tr>
+      <tr><td>Lyell Canyon</td><td>Dog Lake Parking (TM Lodge Rd)</td><td><span class="badge badge-easy">Easy</span></td><td>&lt;100 ft</td><td>Out &amp; Back</td><td>1.4+ mi RT</td><td>Flat canyon, Merced River, wildlife, solitude</td></tr>
+      <tr><td>Harden Lake</td><td>White Wolf Campground TH</td><td><span class="badge badge-em">Easy–Moderate</span></td><td>300 ft</td><td>Out &amp; Back</td><td>5.8 mi RT</td><td>Seasonal lake, peaceful forest</td></tr>
+      <tr><td>Tuolumne Grove of Giant Sequoias</td><td>Crane Flat TH (Old Big Oak Flat Rd)</td><td><span class="badge badge-moderate">Moderate</span></td><td>400 ft descent</td><td>Out &amp; Back</td><td>2.5 mi RT</td><td>Giant sequoias, old-growth forest, historic tunnel tree</td></tr>
+      <tr><td>Gaylor Lakes</td><td>Tioga Pass Entrance Station</td><td><span class="badge badge-moderate">Moderate</span></td><td>500–600 ft</td><td>Out &amp; Back</td><td>2.6–3.0 mi RT</td><td>Alpine lakes, Dana Meadows views, High Sierra</td></tr>
+      <tr><td>May Lake &amp; Mt. Hoffmann</td><td>May Lake TH (Snow Flat Rd)</td><td><span class="badge badge-moderate">Moderate</span></td><td>500 ft</td><td>Out &amp; Back</td><td>2.5 mi RT</td><td>High Sierra lake, Hoffmann summit option, views</td></tr>
+      <tr><td>Dog Lake &amp; Lembert Dome</td><td>Dog Lake Parking (Tuolumne Area)</td><td><span class="badge badge-moderate">Moderate</span></td><td>850 ft</td><td>Out &amp; Back / Loop</td><td>3.8–5.0 mi RT</td><td>Alpine lake, dome summit, meadow panorama</td></tr>
+      <tr><td>Elizabeth Lake</td><td>Tuolumne Meadows VC / Campground</td><td><span class="badge badge-moderate">Moderate</span></td><td>900–1,000 ft</td><td>Out &amp; Back</td><td>4.6–6.8 mi RT</td><td>Glacier-carved lake, Unicorn Peak, alpine scenery</td></tr>
+      <tr><td>Mono Pass</td><td>Tioga Rd at Dana Meadows</td><td><span class="badge badge-moderate">Moderate</span></td><td>900–1,000 ft</td><td>Out &amp; Back</td><td>7.4–8.0 mi RT</td><td>Mono Lake views, eastern Sierra, historic mines</td></tr>
+      <tr><td>Cathedral Lakes</td><td>Tuolumne Meadows VC</td><td><span class="badge badge-moderate">Moderate</span></td><td>800–1,000 ft</td><td>Out &amp; Back</td><td>7.0–7.6 mi RT</td><td>Pristine alpine lakes, Cathedral Peak, John Muir Trail</td></tr>
+      <tr><td>Spillway Lake</td><td>Mono Pass TH</td><td><span class="badge badge-moderate">Moderate</span></td><td>800 ft</td><td>Out &amp; Back</td><td>8.0 mi RT</td><td>Remote lake, high alpine scenery, solitude</td></tr>
+      <tr><td>North Dome</td><td>Porcupine Creek TH (Tioga Rd)</td><td><span class="badge badge-ms">Moderate–Strenuous</span></td><td>560 ft net descent</td><td>Out &amp; Back</td><td>8.8 mi RT</td><td>Face-to-face Half Dome view, valley overlook</td></tr>
+      <tr><td>Sunrise Lakes</td><td>Tenaya Lake TH / Sunrise TH</td><td><span class="badge badge-ms">Moderate–Strenuous</span></td><td>1,300 ft</td><td>Out &amp; Back</td><td>8.8 mi RT</td><td>Multiple alpine lakes, High Sierra views</td></tr>
+      <tr><td>Lembert Dome</td><td>Dog Lake / Lembert Dome Parking</td><td><span class="badge badge-strenuous">Strenuous</span></td><td>900 ft</td><td>Out &amp; Back</td><td>2.8 mi RT</td><td>Panoramic Tuolumne Meadows, Cathedral &amp; Unicorn Peaks</td></tr>
+      <tr><td>Lower Gaylor Lake</td><td>White Wolf Area TH</td><td><span class="badge badge-strenuous">Strenuous</span></td><td>800 ft</td><td>Out &amp; Back</td><td>4.6 mi RT</td><td>Remote lake, solitude, High Sierra</td></tr>
+      <tr><td>Glen Aulin &amp; Tuolumne Falls</td><td>Lembert Dome Parking</td><td><span class="badge badge-strenuous">Strenuous</span></td><td>800 ft return</td><td>Out &amp; Back</td><td>11–19 mi RT</td><td>Tuolumne Falls, Waterwheel Falls, river canyon</td></tr>
+      <tr><td>Ten Lakes</td><td>White Wolf TH / Tioga Rd</td><td><span class="badge badge-strenuous">Strenuous</span></td><td>2,700 ft</td><td>Out &amp; Back</td><td>13 mi RT</td><td>Multiple alpine lakes, granite, backcountry feel</td></tr>
+      <tr><td>Young Lakes</td><td>Lembert Dome Parking</td><td><span class="badge badge-strenuous">Strenuous</span></td><td>1,300 ft</td><td>Out &amp; Back / Loop</td><td>13.6 mi RT</td><td>Remote high-country lakes, wilderness scenery</td></tr>
+      <tr><td>Clouds Rest</td><td>Tenaya Lake or Sunrise TH</td><td><span class="badge badge-strenuous">Strenuous</span></td><td>1,775 ft</td><td>Out &amp; Back</td><td>14.5 mi RT</td><td>Highest valley-rim peak, Half Dome views, summit panorama</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- HETCH HETCHY -->
+<div class="section" data-region="hetch">
+  <div class="section-header">
+    <div class="section-icon">💧</div>
+    <div><div class="section-title">Hetch Hetchy &amp; Big Oak Flat</div><div class="section-subtitle">Northwest park · Reservoir &amp; waterfalls · Great in fall</div></div>
+    <div class="section-count" id="count-hetch"></div>
+  </div>
+  <div class="table-wrap"><table id="table-hetch">
+    <thead><tr>
+      <th onclick="sortTable('table-hetch',0,this)">Trail Name <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-hetch',1,this)">Trailhead <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-hetch',2,this)">Difficulty <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-hetch',3,this)">Elev. Gain <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-hetch',4,this)">Type <span class="sort-arrow">⇅</span></th>
+      <th onclick="sortTable('table-hetch',5,this)">Distance <span class="sort-arrow">⇅</span></th>
+      <th>Features</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>Carlon Falls</td><td>Carlon Day Use Area (Hwy 120)</td><td><span class="badge badge-easy">Easy</span></td><td>200 ft</td><td>Out &amp; Back</td><td>3.8 mi RT</td><td>Charming waterfall, forest, South Fork Tuolumne River</td></tr>
+      <tr><td>Foresta Falls</td><td>Foresta Village</td><td><span class="badge badge-easy">Easy</span></td><td>200 ft</td><td>Out &amp; Back</td><td>2.0 mi RT</td><td>Small waterfall, peaceful forest walk</td></tr>
+      <tr><td>Lookout Point</td><td>Hetch Hetchy Road</td><td><span class="badge badge-em">Easy–Moderate</span></td><td>500 ft</td><td>Out &amp; Back</td><td>2.8 mi RT</td><td>Reservoir &amp; valley views, less-traveled</td></tr>
+      <tr><td>Wapama Falls</td><td>O'Shaughnessy Dam, Hetch Hetchy</td><td><span class="badge badge-moderate">Moderate</span></td><td>200 ft</td><td>Out &amp; Back</td><td>5.5 mi RT</td><td>Dramatic waterfall, reservoir views, granite walls</td></tr>
+      <tr><td>Little Nellie Falls</td><td>Hetch Hetchy Area</td><td><span class="badge badge-moderate">Moderate</span></td><td>320 ft</td><td>Out &amp; Back</td><td>5.6 mi RT</td><td>Secluded waterfall, forest, solitude</td></tr>
+      <tr><td>Merced Grove of Giant Sequoias</td><td>Merced Grove TH — Big Oak Flat Rd</td><td><span class="badge badge-moderate">Moderate</span></td><td>600 ft</td><td>Out &amp; Back</td><td>3.0 mi RT</td><td>Least-crowded sequoia grove in Yosemite</td></tr>
+      <tr><td>Rancheria Falls</td><td>O'Shaughnessy Dam, Hetch Hetchy</td><td><span class="badge badge-strenuous">Strenuous</span></td><td>800 ft</td><td>Out &amp; Back</td><td>13 mi RT</td><td>Waterfall, full reservoir views, wilderness</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+</main>
+
+<!-- ══════════════════════════════════════════════ -->
+<!--  INTERACTIVE MAP SECTION                      -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="map-section">
+  <div class="map-header">
+    <div class="map-header-inner">
+      <div class="map-icon">🗺</div>
+      <div>
+        <div class="map-title">Interactive Park Map</div>
+        <div class="map-subtitle">Click any marker to see trail details · Scroll to zoom · Drag to pan</div>
+      </div>
+    </div>
+    <div class="map-legend">
+      <div class="legend-item"><div class="legend-dot easy"></div> Easy trails</div>
+      <div class="legend-item"><div class="legend-dot moderate"></div> Moderate trails</div>
+      <div class="legend-item"><div class="legend-dot strenuous"></div> Strenuous trails</div>
+      <div class="legend-item"><div class="legend-dot mixed"></div> Mixed difficulty</div>
+      <div class="legend-item"><div class="legend-dot visitor"></div> Visitor Centers</div>
+    </div>
+  </div>
+  <div id="map"></div>
+</div>
+
+<footer>
+  Data sourced from <a href="https://www.nps.gov/yose" target="_blank">nps.gov/yose</a> &amp; yosemitehikes.com &nbsp;·&nbsp;
+  Map tiles © <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors &nbsp;·&nbsp;
+  Always check conditions: <strong>209-372-0200</strong>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+// ─── TABLE FUNCTIONS ────────────────────────────────────────────
+function updateCounts() {
+  ['valley','glacier','southern','tioga','hetch'].forEach(region => {
+    const table = document.getElementById('table-' + region);
+    if (!table) return;
+    const rows = table.querySelectorAll('tbody tr');
+    const visible = [...rows].filter(r => !r.classList.contains('hidden')).length;
+    const el = document.getElementById('count-' + region);
+    if (el) el.textContent = visible + ' trail' + (visible !== 1 ? 's' : '');
+  });
+}
+function filterAll() {
+  const search = document.getElementById('searchBox').value.toLowerCase();
+  const diff   = document.getElementById('diffFilter').value.toLowerCase();
+  const region = document.getElementById('regionFilter').value;
+  document.querySelectorAll('.section').forEach(section => {
+    const sRegion = section.dataset.region;
+    const sectionMatch = !region || sRegion === region;
+    section.style.display = sectionMatch ? '' : 'none';
+    if (!sectionMatch) return;
+    section.querySelectorAll('tbody tr').forEach(row => {
+      const text = row.textContent.toLowerCase();
+      const rowDiff = row.querySelector('.badge')?.textContent.toLowerCase() || '';
+      const searchOk = !search || text.includes(search);
+      const diffOk   = !diff   || rowDiff.includes(diff);
+      row.classList.toggle('hidden', !(searchOk && diffOk));
+    });
+  });
+  updateCounts();
+}
+function resetFilters() {
+  document.getElementById('searchBox').value = '';
+  document.getElementById('diffFilter').value = '';
+  document.getElementById('regionFilter').value = '';
+  document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('hidden'));
+  document.querySelectorAll('.section').forEach(s => s.style.display = '');
+  updateCounts();
+}
+function sortTable(tableId, colIndex, th) {
+  const table = document.getElementById(tableId);
+  const tbody = table.querySelector('tbody');
+  const rows = [...tbody.querySelectorAll('tr')];
+  const asc = th.dataset.asc !== 'true';
+  th.dataset.asc = asc;
+  table.querySelectorAll('thead th').forEach(h => h.classList.remove('sorted'));
+  th.classList.add('sorted');
+  th.querySelector('.sort-arrow').textContent = asc ? '↑' : '↓';
+  rows.sort((a, b) => {
+    const aVal = a.cells[colIndex]?.textContent.trim().toLowerCase() || '';
+    const bVal = b.cells[colIndex]?.textContent.trim().toLowerCase() || '';
+    return asc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+updateCounts();
+
+// ─── MAP ────────────────────────────────────────────────────────
+const map = L.map('map', {
+  center: [37.7490, -119.5880],
+  zoom: 11,
+  zoomControl: true
+});
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  maxZoom: 18
+}).addTo(map);
+
+// marker icon factory
+function makeIcon(color, size) {
+  const s = size || 12;
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:${s}px;height:${s}px;background:${color};border:2px solid rgba(255,255,255,0.85);border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,0.4);"></div>`,
+    iconSize: [s, s],
+    iconAnchor: [s/2, s/2]
+  });
+}
+
+const COLORS = {
+  easy:      '#3a7d44',
+  moderate:  '#b87333',
+  strenuous: '#b03030',
+  mixed:     '#7a6020',
+  visitor:   '#5b8fa8'
+};
+
+function popup(name, region, diff, distance, elev, type, features) {
+  const colMap = { easy: '#3a7d44', moderate: '#b87333', strenuous: '#b03030', mixed: '#7a6020' };
+  const col = colMap[diff] || '#555';
+  return `
+    <div class="popup-name">${name}</div>
+    <div class="popup-region">${region}</div>
+    <span class="popup-badge" style="background:${col}18;color:${col};border:1px solid ${col}44">${diff.charAt(0).toUpperCase()+diff.slice(1)}</span>
+    <div class="popup-row"><span class="popup-label">Distance</span><span>${distance}</span></div>
+    <div class="popup-row"><span class="popup-label">Elev. Gain</span><span>${elev}</span></div>
+    <div class="popup-row"><span class="popup-label">Type</span><span>${type}</span></div>
+    <div style="margin-top:8px;font-size:12px;color:#555;border-top:1px solid #eee;padding-top:7px">${features}</div>`;
+}
+
+// ── VISITOR CENTERS (blue) ──
+const vcIcon = makeIcon(COLORS.visitor, 14);
+[
+  [37.7456, -119.5936, 'Yosemite Valley Welcome Center', 'Yosemite Village, near Village Store'],
+  [37.7461, -119.5971, 'Yosemite Exploration Center', 'Yosemite Village — Shuttle Stop #5'],
+  [37.5358, -119.6452, 'Wawona Information Station', "Hill's Studio, near Wawona Hotel"],
+  [37.8768, -119.8703, 'Big Oak Flat Information Station', 'Big Oak Flat Entrance Road'],
+  [37.8731, -119.3607, 'Tuolumne Meadows Visitor Center', 'Tioga Road, Tuolumne Meadows ⚠️ seasonal'],
+  [37.9463, -119.7896, 'Hetch Hetchy Ranger Station', 'O\'Shaughnessy Dam, Hetch Hetchy']
+].forEach(([lat, lng, name, addr]) => {
+  L.marker([lat, lng], {icon: vcIcon})
+    .addTo(map)
+    .bindPopup(`<div class="popup-name">ℹ️ ${name}</div><div style="font-size:12px;color:#555;margin-top:6px">${addr}</div>`);
+});
+
+// ── TRAIL MARKERS ──
+const trails = [
+  // YOSEMITE VALLEY
+  [37.7165, -119.6509, 'Bridalveil Fall Trail', 'Yosemite Valley', 'easy', '0.5 mi RT', '80 ft', 'Out & Back', 'Iconic waterfall, valley views'],
+  [37.7424, -119.5966, 'Lower Yosemite Fall Trail', 'Yosemite Valley', 'easy', '1.0 mi', '50 ft', 'Loop', 'Tallest waterfall in N. America (base)'],
+  [37.7415, -119.5892, "Cook's Meadow / Sentinel Loop", 'Yosemite Valley', 'easy', '2.25 mi', 'Flat', 'Loop', 'Half Dome views, wildflower meadow, wildlife'],
+  [37.7320, -119.5590, 'Happy Isles Nature Walk', 'Yosemite Valley', 'easy', '0.5 mi', '<10 ft', 'Out & Back', 'Merced River, nature exhibits, family-friendly'],
+  [37.7320, -119.5590, 'Vernal Fall Footbridge', 'Yosemite Valley', 'mixed', '2.0 mi RT', '300 ft', 'Out & Back', 'Merced River gorge, Vernal Fall views'],
+  [37.7414, -119.5528, 'Mirror Lake Loop', 'Yosemite Valley', 'mixed', '2–5 mi', '100–200 ft', 'Loop', 'Reflective lake, Half Dome views, canyon'],
+  [37.7151, -119.6783, 'Artist Point / Inspiration Point', 'Yosemite Valley', 'moderate', '2.0–2.6 mi RT', '500–1,000 ft', 'Out & Back', 'Valley overlook, El Capitan, Bridalveil Fall'],
+  [37.7424, -119.5966, 'Upper Yosemite Falls Trail', 'Yosemite Valley', 'strenuous', '7.6 mi RT', '2,700 ft', 'Out & Back', 'Top of tallest waterfall in North America'],
+  [37.7424, -119.5966, 'Columbia Rock', 'Yosemite Valley', 'moderate', '3.0 mi RT', '1,000 ft', 'Out & Back', 'Valley views, stepping stone to Upper Falls'],
+  [37.7320, -119.5590, 'Mist Trail (Vernal & Nevada Falls)', 'Yosemite Valley', 'strenuous', '3–7 mi RT', '1,000–2,000 ft', 'Out & Back', 'Vernal & Nevada Falls, granite steps, mist spray'],
+  [37.7274, -119.6520, 'Four Mile Trail', 'Yosemite Valley', 'strenuous', '4.8 mi one way', '3,200 ft', 'One Way', 'Glacier Point views, Half Dome, Yosemite Falls'],
+  [37.7151, -119.6783, 'Pohono Trail', 'Yosemite Valley', 'strenuous', '13 mi one way', '3,700 ft', 'One Way', 'Valley rim, multiple waterfalls, solitude'],
+  [37.7320, -119.5590, 'Half Dome Trail', 'Yosemite Valley', 'strenuous', '14–16.4 mi RT', '4,800 ft', 'Out & Back', 'Iconic summit, cables, valley panorama. Permit required!'],
+  [37.7259, -119.5690, 'Snow Creek Trail', 'Yosemite Valley', 'strenuous', '7.2–9.4 mi RT', '2,700 ft', 'Out & Back', 'North Rim views, solitude, switchbacks'],
+  [37.7155, -119.6220, 'Turtleback Dome', 'Yosemite Valley', 'moderate', '1.2 mi RT', '360 ft', 'Out & Back', 'Dome scramble, valley views'],
+  [37.7415, -119.5750, 'Valley Loop Trail', 'Yosemite Valley', 'moderate', '6.5–13 mi', 'Mostly flat', 'Loop', 'Full valley scenery, meadows, river'],
+
+  // GLACIER POINT ROAD
+  [37.7268, -119.5728, 'Glacier Point Overlook', 'Glacier Point Road', 'easy', '1.0 mi', '<50 ft', 'Out & Back', 'Half Dome, Nevada Fall, full valley panorama'],
+  [37.7268, -119.5728, 'Washburn Point', 'Glacier Point Road', 'easy', '0.1 mi', '15 ft', 'Out & Back', 'Quick panoramic overlook, Half Dome'],
+  [37.6954, -119.6178, 'McGurk Meadow', 'Glacier Point Road', 'easy', '1.8 mi RT', '100 ft', 'Out & Back', 'Wildflower meadow, historic cabin'],
+  [37.6890, -119.5900, 'Mono Meadow', 'Glacier Point Road', 'easy', '1.2 mi RT', '300 ft', 'Out & Back', 'Peaceful meadow, forest walk'],
+  [37.6750, -119.6050, 'Westfall Meadow', 'Glacier Point Road', 'easy', '2.8 mi RT', '100 ft', 'Out & Back', 'Quiet meadow, shady forest'],
+  [37.7146, -119.5988, 'Taft Point & the Fissures', 'Glacier Point Road', 'moderate', '2.2 mi RT', '200 ft', 'Out & Back', 'Dramatic cliff fissures, El Cap & valley views'],
+  [37.7129, -119.5848, 'Sentinel Dome', 'Glacier Point Road', 'moderate', '2.2 mi RT', '400 ft', 'Out & Back', '360° panorama: Half Dome, El Cap, Yosemite Falls'],
+  [37.6890, -119.6100, 'Bridalveil Creek Trail', 'Glacier Point Road', 'moderate', '5.5 mi RT', '100 ft', 'Out & Back', 'Peaceful creek, old-growth forest'],
+  [37.7268, -119.5728, 'Illilouette Falls', 'Glacier Point Road', 'moderate', '4.0 mi RT', '1,400 ft', 'Out & Back', 'Secluded waterfall, valley views'],
+  [37.7151, -119.6783, 'Dewey, Crocker & Stanford Points', 'Glacier Point Road', 'mixed', '7.8 mi RT', '300 ft', 'Out & Back', 'Rim views, solitude, dramatic cliffs'],
+  [37.6700, -119.6300, 'Ostrander Lake', 'Glacier Point Road', 'strenuous', '12.4 mi RT', '1,600 ft', 'Out & Back', 'Remote alpine lake, granite, solitude'],
+
+  // SOUTHERN YOSEMITE
+  [37.5358, -119.6452, 'Wawona Swinging Bridge Loop', 'Southern Yosemite', 'easy', '0.75 mi', '<50 ft', 'Loop', 'Merced River, swimming hole'],
+  [37.5400, -119.6530, 'Wawona Meadow Loop', 'Southern Yosemite', 'easy', '3.5 mi', '<50 ft', 'Loop', 'Wildflower meadow, dog & bike-friendly'],
+  [37.5017, -119.5993, 'Mariposa Grove of Giant Sequoias', 'Southern Yosemite', 'mixed', '2.2–6+ mi', '1,200 ft', 'Loop options', 'Grizzly Giant, Tunnel Tree, massive sequoias'],
+  [37.5537, -119.6157, 'Chilnualna Falls', 'Southern Yosemite', 'strenuous', '8.4 mi RT', '2,300 ft', 'Out & Back', 'Multi-tiered waterfalls, granite slabs, solitude'],
+
+  // TIOGA ROAD
+  [37.8310, -119.4887, 'Olmsted Point Walk', 'Tioga Road / High Country', 'easy', '0.25 mi', '<100 ft', 'Out & Back', 'Tenaya Lake & Half Dome views'],
+  [37.8380, -119.4660, 'Tenaya Lake Loop', 'Tioga Road / High Country', 'easy', '2.5 mi', 'Flat', 'Loop', 'Alpine lake, granite domes, swimming'],
+  [37.8731, -119.3607, 'Tuolumne Meadows Stroll', 'Tioga Road / High Country', 'easy', '2.0 mi', 'Flat', 'Out & Back', 'Wildflower meadow, Cathedral Peaks, river'],
+  [37.8770, -119.3750, 'Parsons Lodge & Soda Springs', 'Tioga Road / High Country', 'easy', '1.4 mi RT', 'Flat', 'Out & Back', 'Carbonated springs, historic lodge, meadow'],
+  [37.8680, -119.4040, 'Pothole Dome', 'Tioga Road / High Country', 'easy', '1.0 mi RT', '200 ft', 'Out & Back', 'Dome scramble, meadow views, river'],
+  [37.8620, -119.6270, 'Lukens Lake', 'Tioga Road / High Country', 'easy', '1.6 mi RT', '200 ft', 'Out & Back', 'Quiet alpine lake, wildflowers'],
+  [37.8731, -119.3607, 'Lyell Canyon', 'Tioga Road / High Country', 'easy', '1.4+ mi RT', '<100 ft', 'Out & Back', 'Flat canyon, Merced River, wildlife'],
+  [37.8720, -119.6430, 'Harden Lake', 'Tioga Road / High Country', 'mixed', '5.8 mi RT', '300 ft', 'Out & Back', 'Seasonal lake, peaceful forest'],
+  [37.8906, -119.7703, 'Tuolumne Grove of Giant Sequoias', 'Tioga Road / High Country', 'moderate', '2.5 mi RT', '400 ft descent', 'Out & Back', 'Giant sequoias, old-growth forest'],
+  [37.9148, -119.3130, 'Gaylor Lakes', 'Tioga Road / High Country', 'moderate', '2.6–3.0 mi RT', '500–600 ft', 'Out & Back', 'Alpine lakes, Dana Meadows views, High Sierra'],
+  [37.8380, -119.4660, 'Tenaya Lake to May Lake', 'Tioga Road / High Country', 'moderate', '2.5 mi RT', '500 ft', 'Out & Back', 'High Sierra lake, Mt. Hoffmann summit option'],
+  [37.8800, -119.3800, 'Dog Lake & Lembert Dome', 'Tioga Road / High Country', 'moderate', '3.8–5.0 mi RT', '850 ft', 'Out & Back / Loop', 'Alpine lake, dome summit, meadow panorama'],
+  [37.8731, -119.3607, 'Elizabeth Lake', 'Tioga Road / High Country', 'moderate', '4.6–6.8 mi RT', '900–1,000 ft', 'Out & Back', 'Glacier-carved lake, Unicorn Peak'],
+  [37.8900, -119.2700, 'Mono Pass', 'Tioga Road / High Country', 'moderate', '7.4–8.0 mi RT', '900–1,000 ft', 'Out & Back', 'Mono Lake views, eastern Sierra, historic mines'],
+  [37.8731, -119.3607, 'Cathedral Lakes', 'Tioga Road / High Country', 'moderate', '7.0–7.6 mi RT', '800–1,000 ft', 'Out & Back', 'Pristine alpine lakes, Cathedral Peak, JMT'],
+  [37.8900, -119.2700, 'Spillway Lake', 'Tioga Road / High Country', 'moderate', '8.0 mi RT', '800 ft', 'Out & Back', 'Remote lake, high alpine scenery, solitude'],
+  [37.7770, -119.5310, 'North Dome', 'Tioga Road / High Country', 'mixed', '8.8 mi RT', '560 ft net', 'Out & Back', 'Face-to-face Half Dome view, valley overlook'],
+  [37.8380, -119.4660, 'Sunrise Lakes', 'Tioga Road / High Country', 'mixed', '8.8 mi RT', '1,300 ft', 'Out & Back', 'Multiple alpine lakes, High Sierra views'],
+  [37.8800, -119.3800, 'Lembert Dome', 'Tioga Road / High Country', 'strenuous', '2.8 mi RT', '900 ft', 'Out & Back', 'Panoramic Tuolumne Meadows & peaks views'],
+  [37.8620, -119.6270, 'Lower Gaylor Lake', 'Tioga Road / High Country', 'strenuous', '4.6 mi RT', '800 ft', 'Out & Back', 'Remote lake, solitude, High Sierra'],
+  [37.8770, -119.3750, 'Glen Aulin & Tuolumne Falls', 'Tioga Road / High Country', 'strenuous', '11–19 mi RT', '800 ft return', 'Out & Back', 'Tuolumne Falls, Waterwheel Falls, river canyon'],
+  [37.8620, -119.6270, 'Ten Lakes', 'Tioga Road / High Country', 'strenuous', '13 mi RT', '2,700 ft', 'Out & Back', 'Multiple alpine lakes, granite, backcountry feel'],
+  [37.8800, -119.3800, 'Young Lakes', 'Tioga Road / High Country', 'strenuous', '13.6 mi RT', '1,300 ft', 'Out & Back / Loop', 'Remote high-country lakes, wilderness scenery'],
+  [37.8380, -119.4660, 'Clouds Rest', 'Tioga Road / High Country', 'strenuous', '14.5 mi RT', '1,775 ft', 'Out & Back', 'Highest valley-rim peak, Half Dome views'],
+
+  // HETCH HETCHY
+  [37.8620, -119.8470, 'Carlon Falls', 'Hetch Hetchy', 'easy', '3.8 mi RT', '200 ft', 'Out & Back', 'Charming waterfall, forest, river'],
+  [37.7880, -119.7770, 'Foresta Falls', 'Hetch Hetchy & Big Oak Flat', 'easy', '2.0 mi RT', '200 ft', 'Out & Back', 'Small waterfall, peaceful forest walk'],
+  [37.9463, -119.7896, 'Lookout Point', 'Hetch Hetchy', 'mixed', '2.8 mi RT', '500 ft', 'Out & Back', 'Reservoir & valley views, less-traveled'],
+  [37.9463, -119.7896, 'Wapama Falls', 'Hetch Hetchy', 'moderate', '5.5 mi RT', '200 ft', 'Out & Back', 'Dramatic waterfall, reservoir views, granite walls'],
+  [37.9463, -119.7896, 'Rancheria Falls', 'Hetch Hetchy', 'strenuous', '13 mi RT', '800 ft', 'Out & Back', 'Waterfall, full reservoir views, wilderness'],
+  [37.9463, -119.7896, 'Little Nellie Falls', 'Hetch Hetchy', 'moderate', '5.6 mi RT', '320 ft', 'Out & Back', 'Secluded waterfall, forest, solitude'],
+  [37.8750, -119.8630, 'Merced Grove of Giant Sequoias', 'Big Oak Flat', 'moderate', '3.0 mi RT', '600 ft', 'Out & Back', 'Least-crowded sequoia grove in Yosemite'],
+];
+
+trails.forEach(([lat, lng, name, region, diff, distance, elev, type, features]) => {
+  const color = COLORS[diff] || COLORS.mixed;
+  L.marker([lat, lng], { icon: makeIcon(color, 12) })
+    .addTo(map)
+    .bindPopup(popup(name, region, diff, distance, elev, type, features), { maxWidth: 280 });
+});
+
+// park boundary polygon (approximate)
+const parkBoundary = [
+  [38.1855,-119.5100],[38.1500,-119.8900],[37.9800,-120.0600],
+  [37.7100,-119.9200],[37.4900,-119.8500],[37.4800,-119.5300],
+  [37.5100,-119.2000],[37.7700,-119.1700],[37.9300,-119.1500],
+  [38.1855,-119.5100]
+];
+L.polygon(parkBoundary, {
+  color: '#2d4a2d', weight: 2, opacity: 0.6,
+  fillColor: '#2d4a2d', fillOpacity: 0.05
+}).addTo(map).bindPopup('<strong>Yosemite National Park</strong><br>~748,000 acres · Est. 1890');
+</script>
+</body>
+</html>
